@@ -1,0 +1,16 @@
+version: "3.9"
+volumes:
+  vol-ecm10:
+services:
+  emcM10-postgres:
+    image: "postgres:16.3-alpine3.20"
+    container_name: "emcM10-postgres"
+    ports:
+      - "8888:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: sunlyecm
+      POSTGRES_USER: sunlyecm10
+      POSTGRES_DB: db_sunlyecm10
+    volumes:
+      - "vol-ecm10:/var/lib/postgresql/data"
