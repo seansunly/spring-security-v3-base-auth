@@ -77,15 +77,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(String codeOrder) {
+    public OrderResponse deleteOrder(String codeOrder) {
         Oder oder=orderRepository.findByCodeOrder(codeOrder)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"order code not found "));
         oder.setIsDeleted(true);
         orderRepository.save(oder);
+        return orderMapper.entityToResponse(oder);
     }
     @Override
     public List<OrderResponse> getOrders() {
         List<Oder> oderList = orderRepository.findAll(Sort.by(Sort.Direction.DESC,"oderId"));
         return orderMapper.entityToResponseList(oderList);
+    }
+
+    @Override
+    public void deleteByCodeOrder(String codeOrder) {
+        Oder oder=orderRepository.findByCodeOrder(codeOrder)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"order code not found "));
+        orderRepository.delete(oder);
     }
 }

@@ -7,6 +7,7 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.shipper.dtoShipper.ShipperUpdate;
 import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +18,10 @@ import java.util.List;
 public class ShipperController {
     private final ShipperService shipperService;
     @GetMapping
-    public List<ShipperResponse> getShippers() {
-        return shipperService.getShippers();
+    public Page<ShipperResponse> getShippers(
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "25") int pageSize) {
+        return shipperService.getShippers(pageNumber,pageSize);
     }
     @PostMapping
     public ShipperResponse createShipper(@Valid @RequestBody ShipperCreate shipperCreate){
@@ -29,7 +32,7 @@ public class ShipperController {
         shipperService.deleteShipper(contactPhone);
     }
     @GetMapping("/{contactPhone}")
-    public ShipperResponse getShipper(@PathVariable String contactPhone){
+    public ShipperResponse getShipper(@Valid @PathVariable String contactPhone){
         return shipperService.getShipper(contactPhone);
     }
     @PatchMapping("/{contactPhone}")

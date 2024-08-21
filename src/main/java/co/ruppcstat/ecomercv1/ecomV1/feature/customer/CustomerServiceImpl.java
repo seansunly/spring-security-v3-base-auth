@@ -6,6 +6,8 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.customer.DTOCustomer.CustomerRespon
 import co.ruppcstat.ecomercv1.ecomV1.feature.customer.DTOCustomer.CustomerUpdate;
 import co.ruppcstat.ecomercv1.ecomV1.mapper.CustomerMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,8 +24,12 @@ public class CustomerServiceImpl implements CustomerService {
         if(customerRepository.existsByPhone(customerCreate.phone())){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone number already exists");
         }
+        if(customerRepository.existsByEmail(customerCreate.email())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        }
         Customer customer=
                 customerMapper.dtoToEntity(customerCreate);
+        customer.setIsDeleted(false);
         customer=customerRepository.save(customer);
         return customerMapper.entityToDto(customer);
     }
@@ -31,36 +37,41 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponse updateCustomer(String phone, CustomerUpdate customerUpdate) {
         Customer customer=customerRepository.findByPhone(phone)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"id not found"));
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"phone number not found"));
         customerMapper.updateEntityToDto(customer, customerUpdate);
         customer=customerRepository.save(customer);
         return customerMapper.entityToDto(customer);
     }
 
     @Override
-    public void deleteCustomer(Integer id) {
-        Customer customer=customerRepository.findByCustomerID(id).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"id not found"));
+    public void deleteCustomer(String phone) {
+        Customer customer=customerRepository.findByPhone(phone)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"id not found"));
         customerRepository.delete(customer);
     }
 
 
     @Override
-    public List<CustomerResponse> getCustomers() {
+    public Page<CustomerResponse> getCustomers(int pageNumber, int pageSize) {
        // Sort sortById=Sort.by(Sort.Direction.DESC,"id");
-        List<Customer> customerList=customerRepository.findAll(Sort.by(Sort.Direction.DESC,"customerID"));
-        return customerMapper.entityToDto(customerList);
+        Sort sortById = Sort.by(Sort.Direction.DESC, "customerID");
+        PageRequest pageRequest=PageRequest.of(pageNumber, pageSize, sortById);
+        Page<Customer> customerList=customerRepository.findAll(pageRequest);
+        return customerList.map(customerMapper::entityToDto);
     }
 
     @Override
     public CustomerResponse getByphone(String phone) {
-        Customer customer=customerRepository.findByPhone(phone).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"phone not found"));
+        Customer customer=customerRepository.findByPhone(phone)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"phone not found"));
         return customerMapper.entityToDto(customer);
     }
 
     @Override
     public void updateIsDeleted(String phone ) {
-        Customer customer=customerRepository.findByPhone(phone).orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"phone not found"));
-        customer.setIsDeleted(false);
+        Customer customer=customerRepository.findByPhone(phone)
+                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"phone not found"));
+        customer.setIsDeleted(true);
         customerRepository.save(customer);
     }
 

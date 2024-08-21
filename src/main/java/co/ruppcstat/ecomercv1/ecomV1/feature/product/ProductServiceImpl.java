@@ -9,6 +9,8 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.product.dtoProduct.ProductUpdate;
 import co.ruppcstat.ecomercv1.ecomV1.mapper.CategoryMapper;
 import co.ruppcstat.ecomercv1.ecomV1.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -61,9 +63,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> getProducts() {
-        List<Product> products=productRepository.findAll(Sort.by(Sort.Direction.DESC,"productID"));
-        return productMapper.entityListToResponseList(products);
+    public Page<ProductResponse> getProducts(int pageNumber, int pageSize) {
+        Sort sortById = Sort.by(Sort.Direction.DESC, "productID");
+        PageRequest pageRequest=PageRequest.of(pageNumber, pageSize, sortById);
+        Page<Product> products=productRepository.findAll(pageRequest);
+        return products.map(productMapper::entityToResponse);
     }
 
     @Override

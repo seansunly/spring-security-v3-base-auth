@@ -6,6 +6,7 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.supplier.supplierDTO.SupplierRespon
 import co.ruppcstat.ecomercv1.ecomV1.feature.supplier.supplierDTO.SupplierUpdate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +26,11 @@ public class SupplierController {
         return supplierService.getSupplier(contactPhone);
     }
     @GetMapping
-    public List<SupplierResponse> getAllSuppliers() {
-        return supplierService.getAllSuppliers();
+    public Page<SupplierResponse> getAllSuppliers(
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "25") int pageSize
+    ) {
+        return supplierService.getAllSuppliers(pageNumber,pageSize);
     }
 
     @DeleteMapping("/{contactPhone}")

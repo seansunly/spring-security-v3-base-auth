@@ -8,6 +8,8 @@ import java.util.List;
 public interface OrderService {
     OrderResponse createOrder(OrderCreate orderCreate);
     OrderResponse getOrder( String codeOrder);
-    void deleteOrder( String codeOrder);
+    OrderResponse deleteOrder( String codeOrder);
     List<OrderResponse> getOrders();
+    void deleteByCodeOrder( String codeOrder);
+
 }

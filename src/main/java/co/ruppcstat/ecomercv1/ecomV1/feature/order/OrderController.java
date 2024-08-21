@@ -27,8 +27,12 @@ public class OrderController {
     public OrderResponse getOrder(@PathVariable String codeOrder) {
         return orderService.getOrder(codeOrder);
     }
-    @PatchMapping("/{codeOrder}")
-    public void updateIsDeleted(@PathVariable String codeOrder) {
-        orderService.deleteOrder(codeOrder);
+    @PatchMapping("/{codeOrder}/isDeleted")
+    public OrderResponse updateIsDeleted(@PathVariable String codeOrder) {
+       return orderService.deleteOrder(codeOrder);
+    }
+    @DeleteMapping("/{codeOrder}")
+    public void deleteOrder(@PathVariable String codeOrder) {
+        orderService.deleteByCodeOrder(codeOrder);
     }
 }

@@ -5,6 +5,7 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.imports.dtoImport.ImportResponse;
 import co.ruppcstat.ecomercv1.ecomV1.feature.imports.dtoImport.ImportUpdate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +16,11 @@ import java.util.List;
 public class ImportController {
     private final ImportService importService;
     @GetMapping
-    public List<ImportResponse> getAllImports() {
-        return importService.getImports();
+    public Page<ImportResponse> getAllImports(
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "25") int pageSize
+    ) {
+        return importService.getImports(pageNumber,pageSize);
     }
     @PostMapping
     public ImportResponse createImport(@Valid @RequestBody ImportCreate importCreate) {

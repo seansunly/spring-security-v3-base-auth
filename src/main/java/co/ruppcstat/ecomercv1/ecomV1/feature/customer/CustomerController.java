@@ -6,6 +6,7 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.customer.DTOCustomer.CustomerRespon
 import co.ruppcstat.ecomercv1.ecomV1.feature.customer.DTOCustomer.CustomerUpdate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,16 +21,19 @@ public class CustomerController {
         return customerService.createCustomer(customerCreate);
     }
     @GetMapping
-    public List<CustomerResponse> getAllCustomers() {
-        return customerService.getCustomers();
+    public Page<CustomerResponse> getAllCustomers(
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "25") int pageSize
+    ) {
+        return customerService.getCustomers(pageNumber,pageSize);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteCustomer(@PathVariable Integer id) {
-        customerService.deleteCustomer(id);
+    @DeleteMapping("/{phone}")
+    public void deleteCustomer(@PathVariable String phone) {
+        customerService.deleteCustomer(phone);
     }
     @PatchMapping("/{phone}")
-    public CustomerResponse updateCustomer(@PathVariable String phone, @RequestBody CustomerUpdate customerUpdate) {
+    public CustomerResponse updateCustomer(@Valid @PathVariable String phone, @RequestBody CustomerUpdate customerUpdate) {
         return customerService.updateCustomer(phone, customerUpdate);
     }
     @GetMapping("/{phone}")

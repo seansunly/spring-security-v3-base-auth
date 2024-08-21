@@ -71,6 +71,5 @@ public class StaffServiceImpl implements StaffService {
         PageRequest pageRequest=PageRequest.of(pageNumber, pageSize, sortById);
         Page<Staff> staffs=staffRepository.findAll(pageRequest);
         return staffs.map(staffMapper::EntityToResponse);
-        //return staffMapper.EntityToResponseList(staffs);
     }
 }

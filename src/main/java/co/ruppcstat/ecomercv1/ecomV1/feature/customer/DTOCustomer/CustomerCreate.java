@@ -7,7 +7,7 @@ public record CustomerCreate(
          String phone,
          String address,
          String type,
-         String email,
-         Boolean isDeleted
+         String email
+       //  Boolean isDeleted
 ) {
 }

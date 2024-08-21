@@ -6,6 +6,8 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.supplier.supplierDTO.SupplierRespon
 import co.ruppcstat.ecomercv1.ecomV1.feature.supplier.supplierDTO.SupplierUpdate;
 import co.ruppcstat.ecomercv1.ecomV1.mapper.SupplierMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -52,9 +54,11 @@ public class SupplierServiceImpl implements SupplierService{
     }
 
     @Override
-    public List<SupplierResponse> getAllSuppliers() {
-        List<Supplier> suppliers=supplierRepository.findAll(Sort.by(Sort.Direction.DESC, "supplierID"));
-        return supplierMapper.entityListToResponseList(suppliers);
+    public Page<SupplierResponse> getAllSuppliers(int pageNumber, int pageSize) {
+        Sort sortById = Sort.by(Sort.Direction.DESC, "supplierID");
+        PageRequest pageRequest=PageRequest.of(pageNumber, pageSize, sortById);
+        Page<Supplier> suppliers=supplierRepository.findAll(pageRequest);
+        return suppliers.map(supplierMapper::entityToResponse);
     }
 
     @Override

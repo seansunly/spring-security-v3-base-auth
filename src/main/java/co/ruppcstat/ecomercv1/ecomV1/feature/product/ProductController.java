@@ -5,6 +5,7 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.product.dtoProduct.ProductCreate;
 import co.ruppcstat.ecomercv1.ecomV1.feature.product.dtoProduct.ProductResponse;
 import co.ruppcstat.ecomercv1.ecomV1.feature.product.dtoProduct.ProductUpdate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +22,10 @@ public class ProductController {
         return productService.createProduct(productCreate);
     }
     @GetMapping
-    public List<ProductResponse> getProducts() {
-        return productService.getProducts();
+    public Page<ProductResponse> getProducts(
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "25") int pageSize) {
+        return productService.getProducts(pageNumber,pageSize);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{keyId}")

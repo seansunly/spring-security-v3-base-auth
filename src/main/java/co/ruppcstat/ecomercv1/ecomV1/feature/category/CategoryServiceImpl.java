@@ -6,6 +6,8 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.category.DTOCategory.CategoryRespon
 import co.ruppcstat.ecomercv1.ecomV1.feature.category.DTOCategory.CategoryUpdate;
 import co.ruppcstat.ecomercv1.ecomV1.mapper.CategoryMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -51,9 +53,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResponse> getCategories() {
-        List<Category> categoryList=categoryRepository.findAll(Sort.by(Sort.Direction.DESC, "categoryID"));
-        return categoryMapper.entityListToResponse(categoryList);
+    public Page<CategoryResponse> getCategories(int pageNumber, int pageSize) {
+        Sort sortById = Sort.by(Sort.Direction.DESC, "categoryID");
+        PageRequest pageRequest=PageRequest.of(pageNumber, pageSize, sortById);
+        Page<Category> categoryList=categoryRepository.findAll(pageRequest);
+        return categoryList.map(categoryMapper::entityToResponse);
     }
 
     @Override

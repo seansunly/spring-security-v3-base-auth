@@ -5,6 +5,7 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.category.DTOCategory.CategoryRespon
 import co.ruppcstat.ecomercv1.ecomV1.feature.category.DTOCategory.CategoryUpdate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +17,10 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public List<CategoryResponse> getAll() {
-        return categoryService.getCategories();
+    public Page<CategoryResponse> getAll(
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "25") int pageSize) {
+        return categoryService.getCategories(pageNumber,pageSize);
     }
     @GetMapping("/{name}")
     public CategoryResponse getCategory(@PathVariable String name) {

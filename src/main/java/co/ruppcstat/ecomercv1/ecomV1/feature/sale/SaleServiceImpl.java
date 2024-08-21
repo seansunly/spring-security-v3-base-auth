@@ -10,6 +10,8 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.sale.dtoSale.SaleUpdate;
 import co.ruppcstat.ecomercv1.ecomV1.feature.staff.StaffRepository;
 import co.ruppcstat.ecomercv1.ecomV1.mapper.SaleMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -55,9 +57,6 @@ public class SaleServiceImpl implements SalService{
 //        return null;
     }
 
-
-
-
     @Override
     public SaleResponse updateSale(String codeSale, SaleUpdate saleUpdate) {
         return null;
@@ -80,9 +79,11 @@ public class SaleServiceImpl implements SalService{
     }
 
     @Override
-    public List<SaleResponse> getSales() {
-        List<Sale> sales=saleRepository.findAll(Sort.by(Sort.Direction.DESC,"saleId"));
-        return saleMapper.entityListToResponseList(sales);
+    public Page<SaleResponse> getSales(int pageNumber, int pageSize) {
+        Sort sortById = Sort.by(Sort.Direction.DESC, "saleId");
+        PageRequest pageRequest=PageRequest.of(pageNumber, pageSize, sortById);
+        Page<Sale> sales=saleRepository.findAll(pageRequest);
+        return sales.map(saleMapper::entityToResponse);
     }
 
     @Override
@@ -90,6 +91,7 @@ public class SaleServiceImpl implements SalService{
         Sale sale=saleRepository.findByCodeSale(codeSale)
                 .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"sale code not found"));
         sale.setIsDeleted(true);
+       sale= saleRepository.save(sale);
         return saleMapper.entityToResponse(sale);
     }
 }

@@ -5,6 +5,7 @@ import co.ruppcstat.ecomercv1.ecomV1.feature.sale.dtoSale.SaleCreate;
 import co.ruppcstat.ecomercv1.ecomV1.feature.sale.dtoSale.SaleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,8 +21,10 @@ public class SaleController {
         return salService.createSale(saleCreate);
     }
     @GetMapping
-    public List<SaleResponse> getSalAll(){
-        return salService.getSales();
+    public Page<SaleResponse> getSalAll(
+            @RequestParam(required = false, defaultValue = "0") int pageNumber,
+            @RequestParam(required = false, defaultValue = "25") int pageSize){
+        return salService.getSales(pageNumber,pageSize);
     }
     @GetMapping("/{codeSale}")
     public SaleResponse getSale(@PathVariable String codeSale) {
